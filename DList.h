@@ -14,25 +14,27 @@ namespace util
 		};
 
 	private:
-		class IteratorImpl
+		class IteratorAhead
 		{
 		public:
-			IteratorImpl(Node* ihead, Node* itail):
+			IteratorAhead(Node* ihead, Node* itail):
 				m_ihead(ihead),
 				m_itail(itail)
 			{}
+
+			IteratorAhead(IteratorAhead const& obj) = default;
 
 			T& operator*() const
 			{
 				return m_ihead->val;
 			}
 
-			bool operator != (IteratorImpl const& obj)
+			bool operator != (IteratorAhead const& obj)
 			{
 				return m_ihead != obj.m_ihead;
 			}
 
-			IteratorImpl& operator++()
+			IteratorAhead& operator++()
 			{
 				if (m_ihead == m_itail)
 				{
@@ -44,6 +46,76 @@ namespace util
 				}
 				
 				return *this;
+			}
+
+			IteratorAhead operator++(int)
+			{
+				IteratorAhead obj(*this);
+				if (m_ihead == m_itail)
+				{
+					m_ihead = nullptr;
+				}
+				else
+				{
+					m_ihead = m_ihead->next;
+				}
+
+				return obj;
+			}
+
+		private:
+			Node* m_ihead = nullptr;
+			Node* m_itail = nullptr;
+		};
+
+	private:
+		class IteratorReverse
+		{
+		public:
+			IteratorReverse(Node* ihead, Node* itail) :
+				m_ihead(ihead),
+				m_itail(itail)
+			{}
+
+			IteratorReverse(IteratorReverse const& obj) = default;
+
+			T& operator*() const
+			{
+				return m_itail->val;
+			}
+
+			bool operator != (IteratorReverse const& obj)
+			{
+				return m_itail != obj.m_itail;
+			}
+
+			IteratorReverse& operator++()
+			{
+				if (m_itail == m_ihead)
+				{
+					m_itail = nullptr;
+				}
+				else
+				{
+					m_itail = m_itail->prev;
+				}
+
+				return *this;
+			}
+
+			IteratorReverse operator++(int)
+			{
+				IteratorReverse obj(*this);
+				if (m_itail == m_ihead)
+				{
+					m_itail = nullptr;
+				}
+				else
+				{
+					m_itail = m_itail->prev;
+				}
+
+				return obj;
 			}
 
 		private:
@@ -58,7 +130,8 @@ namespace util
 
 	public:
 
-		typedef IteratorImpl Iterator;
+		typedef IteratorAhead Iterator;
+		typedef IteratorReverse RIterator;
 
 		List() = default;
 
@@ -146,12 +219,22 @@ namespace util
 
 		Iterator Begin() const
 		{
-			return IteratorImpl(m_head, m_tail);
+			return IteratorAhead(m_head, m_tail);
 		}
 
 		Iterator End() const
 		{
-			return IteratorImpl(nullptr, m_tail);
+			return IteratorAhead(nullptr, m_tail);
+		}
+
+		IteratorReverse RBegin() const
+		{
+			return IteratorReverse(m_head, m_tail);
+		}
+
+		IteratorReverse REnd() const
+		{
+			return IteratorReverse(m_head, nullptr);
 		}
 	};
 }

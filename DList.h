@@ -2,7 +2,6 @@
 
 namespace util
 {
-	
 	template<class T>
 	class List
 	{
@@ -15,17 +14,56 @@ namespace util
 		};
 
 	private:
+		class IteratorImpl
+		{
+		public:
+			IteratorImpl(Node* ihead, Node* itail, size_t sz):
+				m_ihead(ihead),
+				m_itail(itail),
+				m_isize(sz)
+			{}
+
+			T& operator*() const
+			{
+				return m_ihead->val;
+			}
+
+			bool operator != (IteratorImpl const& obj)
+			{
+				return m_ihead != obj.m_ihead;
+			}
+
+			IteratorImpl& operator++()
+			{
+				if (m_ihead == m_itail)
+				{
+					m_ihead = nullptr;
+				}
+				else
+				{
+					m_ihead = m_ihead->next;
+				}
+				
+				return *this;
+			}
+
+		private:
+			Node* m_ihead = nullptr;
+			Node* m_itail = nullptr;
+			size_t m_isize = 0;
+		};
+
+	private:
 		Node* m_head = nullptr;
 		Node* m_tail = nullptr;
 		size_t m_size = 0;
 
 	public:
-		List()
-		{
 
-		}
+		typedef IteratorImpl Iterator;
 
-		
+		List() = default;
+
 		List(List const& list)
 		{
 			Node* cur = list.m_head;
@@ -106,6 +144,16 @@ namespace util
 		~List()
 		{
 			Clear();
+		}
+
+		Iterator Begin() const
+		{
+			return IteratorImpl(m_head, m_tail, m_size);
+		}
+
+		Iterator End() const
+		{
+			return IteratorImpl(nullptr, m_tail, m_size);
 		}
 	};
 }

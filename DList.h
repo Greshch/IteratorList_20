@@ -17,10 +17,9 @@ namespace util
 		class IteratorImpl
 		{
 		public:
-			IteratorImpl(Node* ihead, Node* itail, size_t sz):
+			IteratorImpl(Node* ihead, Node* itail):
 				m_ihead(ihead),
-				m_itail(itail),
-				m_isize(sz)
+				m_itail(itail)
 			{}
 
 			T& operator*() const
@@ -50,7 +49,6 @@ namespace util
 		private:
 			Node* m_ihead = nullptr;
 			Node* m_itail = nullptr;
-			size_t m_isize = 0;
 		};
 
 	private:
@@ -148,12 +146,12 @@ namespace util
 
 		Iterator Begin() const
 		{
-			return IteratorImpl(m_head, m_tail, m_size);
+			return IteratorImpl(m_head, m_tail);
 		}
 
 		Iterator End() const
 		{
-			return IteratorImpl(nullptr, m_tail, m_size);
+			return IteratorImpl(nullptr, m_tail);
 		}
 	};
 }
